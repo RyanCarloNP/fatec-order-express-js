@@ -3,12 +3,12 @@ const express = require('express');
 //Criação da aplicação
 const app = express();
 //Define método HTTP get que responde np requisição
-app.get('/', (res, req) => {
+app.get('/', (req, res) => {
     //Envia uma resposta a requisição
     res.send('Hello Young Lady!');
 });
 //Define método HTTP post que responde np requisição
-app.post('/', (res, req) => {
+app.post('/', (req, res) => {
     //Envia uma resposta a requisição
     res.send('Hello Young Lady, Again!');
 })
