@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "node ./app.js"
+    "dev": "ts-node-dev --respawn --transpile-only ./app.ts"
   },
   "keywords": [],
   "author": "",
@@ -11,5 +11,11 @@
   "description": "",
   "dependencies": {
     "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.10",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.2"
   }
 }
