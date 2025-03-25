@@ -160,6 +160,22 @@ app.put('/client/:id', (req: Request, res: Response) => {
     };
 })
 
+//Deleta um cliente (DEL)
+app.delete('/client/:id', (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    const client = clients.find((client) => {
+        return client.id == id;
+    });
+    if (!client) {
+        res.status(404).send();
+        return;
+    } else {
+        clients.splice(clients.indexOf(client));
+        res.status(204).send();
+        return;
+    };
+})
+
 //Inicia o servidor na porta 3000
 app.listen(3000, () => {
     console.log('Server is running in door 3000');
