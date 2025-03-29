@@ -1,15 +1,11 @@
 import { Request, Response } from "express";
 
-//Importa o express
 const express = require('express');
 
-//Criação da aplicação
 const app = express();
 
-//Configura a aplicação para receber Json no body das requisições
 app.use(express.json());
 
-//Criação de um Arrey de Produtos
 const products = [
     {
         id: 1,
@@ -35,13 +31,16 @@ const products = [
     }
 ];
 
-//Retornar um produto (GET)
 app.get('/product/:id', (req: Request, res: Response) => {
-    console.log(req.params.id)
+    const id = Number(req.params.id);
+    const name = req.query.name;
+    const brand = req.query.brand;
+    const storageId = Number(req.query.storageId);
 
     const product = products.find((product) => {
-        return product.id == Number(req.params.id);
+        return product.id == id || product.name == name || product.brand == brand || product.storageId == storageId;
     });
+    
     if (!product) {
         res.status(404).send();
         return;
@@ -51,16 +50,17 @@ app.get('/product/:id', (req: Request, res: Response) => {
     };
 });
 
-//Retorna todos os produtos pela List (GET)
 app.get("/product", (req: Request, res: Response) => {
     res.status(200).json(products);
 });
 
-//Deleta um produto (DEL)
 app.delete('/product/:id', (req: Request, res: Response) => {
     const id = Number(req.params.id);
+    const storageId = Number(req.query.storageId);
+
     const product = products.find((product) => {
-        return product.id == id;
+        return product.id == id || product.storageId == storageId;
+
     });
     if (!product) {
         res.status(404).send();
@@ -72,20 +72,21 @@ app.delete('/product/:id', (req: Request, res: Response) => {
     };
 })
 
-//Criação de um novo produto (POST)
 app.post('/product/:id', (req: Request, res: Response) => {
     const product = req.body;
     products.push(product);
     res.status(201).send();
 })
 
-//Atualiza um produto (PUT)
 app.put('/product/:id', (req: Request, res: Response) => {
     const id = Number(req.params.id);
+    const storageId = Number(req.query.storageId);
     const product = req.body;
+
     const index = products.findIndex((product) => {
-        return product.id == id;
+        return product.id == id || product.storageId == storageId;
     });
+
     if (index == -1) {
         res.status(404).send();
         return;
@@ -96,7 +97,6 @@ app.put('/product/:id', (req: Request, res: Response) => {
     };
 })
 
-//Criação de um Arrey de Clientes
 const clients = [
     {
         id: 1,
@@ -109,19 +109,23 @@ const clients = [
     {
         id: 2,
         name: "Maria da Silva",
-        document: "123.456.789-00",
+        document: "123.456.789-01",
         zipCode: "Rua das Flores, 248",
-        phone: "(11) 99999-9999",
+        phone: "(11) 12345-6789",
         email: "silvaMaria@gmail.com"
     }
 ];
 
-//Retorna um cliente (GET)
 app.get('/client/:id', (req: Request, res: Response) => {
     const id = Number(req.params.id);
+    const name = req.query.name;
+    const document = req.query.document;
+    const zipCode = req.query.zipCode;
+
     const client = clients.find((client) => {
-        return client.id == id;
+        return client.id == id || client.name == name || client.document == document || client.zipCode == zipCode;
     });
+
     if (!client) {
         res.status(404).send();
         return;
@@ -131,25 +135,26 @@ app.get('/client/:id', (req: Request, res: Response) => {
     };
 });
 
-//Retorna todos os clientes pela List (GET)
 app.get("/client", (req: Request, res: Response) => {
     res.status(200).json(clients);
 });
 
-//Criação de um novo cliente (POST)
 app.post('/client/:id', (req: Request, res: Response) => {
     const client = req.body;
     clients.push(client);
     res.status(201).send();
 })
 
-//Atualiza um cliente (PUT)
 app.put('/client/:id', (req: Request, res: Response) => {
     const id = Number(req.params.id);
+    const name = req.query.name;
+    const document = req.query.document;
     const client = req.body;
+
     const index = clients.findIndex((client) => {
-        return client.id == id;
+        return client.id == id || client.name == name || client.document == document;
     });
+
     if (index == -1) {
         res.status(404).send();
         return;
@@ -160,12 +165,14 @@ app.put('/client/:id', (req: Request, res: Response) => {
     };
 })
 
-//Deleta um cliente (DEL)
 app.delete('/client/:id', (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+    const id = Number(req.query.id);
+    const document = req.query.document;
+
     const client = clients.find((client) => {
-        return client.id == id;
+        return client.id == id || client.document == document;
     });
+
     if (!client) {
         res.status(404).send();
         return;
@@ -176,7 +183,95 @@ app.delete('/client/:id', (req: Request, res: Response) => {
     };
 })
 
-//Inicia o servidor na porta 3000
+const workers = [
+    {
+        id: 1,
+        name: "Joaquim da Silva",
+        document: "123.466.789-00",
+        position: "Vendedor",
+        workingHours: 8,
+        salary: 1000,
+        zipCode: "Rua dos Ventos, 1",
+    },
+    {
+        id: 2,
+        name: "Suzana De Capres",
+        document: "124.456.789-01",
+        position: "Vendedor",
+        workingHours: 8,
+        salary: 1000,
+        zipCode: "Rua das Rochas, 123",
+    }
+];
+
+app.get('/worker/:id', (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    const name = req.query.name;
+    const position = req.query.position;
+    const workingHours = Number(req.query.workingHours);
+
+    const worker = workers.find((worker) => {
+        return worker.id == id || worker.name == name || worker.position == position || worker.workingHours == workingHours;
+    });
+
+    if (!worker) {
+        res.status(404).send();
+        return;
+    } else {
+        res.status(200).json(worker);
+        return;
+    };
+});
+
+app.get("/worker", (req: Request, res: Response) => {
+    res.status(200).json(workers);
+});
+
+app.post('/worker/:id', (req: Request, res: Response) => {
+    const worker = req.body;
+    workers.push(worker);
+    res.status(201).send();
+});
+
+app.put('/worker/:id', (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    const name = req.query.name;
+    const document = req.query.document;
+    const worker = req.body;
+
+    const index = workers.findIndex((worker) => {
+        return worker.id == id || worker.name == name || worker.document == document;
+    });
+
+    if (index == -1) {
+        res.status(404).send();
+        return;
+    } else {
+        workers[index] = worker;
+        res.status(204).send();
+        return;
+    };
+});
+
+app.delete('/worker/:id', (req: Request, res: Response) => {
+    const id = Number(req.query.id);
+    const name = req.query.name;
+    const document = req.query.document;
+
+    const worker = workers.find((worker) => {
+        return worker.id == id || worker.name == name || worker.document == document;
+    });
+
+    if (!worker) {
+        res.status(404).send();
+        return;
+    } else {
+        workers.splice(workers.indexOf(worker));
+        res.status(204).send();
+        return;
+    };
+});
+
 app.listen(3000, () => {
     console.log('Server is running in door 3000');
 });
