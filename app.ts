@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 //Importa o express
-const express = require('express');
+import express from "express";
 
 //Criação da aplicação
 const app = express();
@@ -36,6 +36,9 @@ const products = [
 ];
 
 //Retornar um produto (GET)
+/*
+*   cliente: GET https://localhost:3000/product/
+*/
 app.get('/product/:id', (req: Request, res: Response) => {
     console.log(req.params.id)
 
@@ -52,7 +55,11 @@ app.get('/product/:id', (req: Request, res: Response) => {
 });
 
 //Retorna todos os produtos pela List (GET)
+/*
+*   cliente: GET https://localhost:3000/product
+*/
 app.get("/product", (req: Request, res: Response) => {
+    console.log(req.query)
     res.status(200).json(products);
 });
 
@@ -73,6 +80,11 @@ app.delete('/product/:id', (req: Request, res: Response) => {
 })
 
 //Criação de um novo produto (POST)
+/*
+*   Define o método Http Rest para cadastro de um produto (POST)
+*   que responde no path /product
+*   cliente: POST https://localhost:3000/product
+*/
 app.post('/product/:id', (req: Request, res: Response) => {
     const product = req.body;
     products.push(product);
