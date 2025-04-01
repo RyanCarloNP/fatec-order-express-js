@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 
+<<<<<<< HEAD
 const express = require('express');
+=======
+//Importa o express
+import express from "express";
+>>>>>>> 5ff2f3ab781605110abe723c69265d17120583b9
 
 const app = express();
 
@@ -31,6 +36,13 @@ const products = [
     }
 ];
 
+<<<<<<< HEAD
+=======
+//Retornar um produto (GET)
+/*
+*   cliente: GET https://localhost:3000/product/
+*/
+>>>>>>> 5ff2f3ab781605110abe723c69265d17120583b9
 app.get('/product/:id', (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const name = req.query.name;
@@ -50,7 +62,15 @@ app.get('/product/:id', (req: Request, res: Response) => {
     };
 });
 
+<<<<<<< HEAD
+=======
+//Retorna todos os produtos pela List (GET)
+/*
+*   cliente: GET https://localhost:3000/product
+*/
+>>>>>>> 5ff2f3ab781605110abe723c69265d17120583b9
 app.get("/product", (req: Request, res: Response) => {
+    console.log(req.query)
     res.status(200).json(products);
 });
 
@@ -72,6 +92,15 @@ app.delete('/product/:id', (req: Request, res: Response) => {
     };
 })
 
+<<<<<<< HEAD
+=======
+//Criação de um novo produto (POST)
+/*
+*   Define o método Http Rest para cadastro de um produto (POST)
+*   que responde no path /product
+*   cliente: POST https://localhost:3000/product
+*/
+>>>>>>> 5ff2f3ab781605110abe723c69265d17120583b9
 app.post('/product/:id', (req: Request, res: Response) => {
     const product = req.body;
     products.push(product);
