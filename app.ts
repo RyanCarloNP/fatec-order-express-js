@@ -1,294 +1,137 @@
 import { Request, Response } from "express";
 
-//Importa o express
+// Importação da biblioteca express
 import express from "express";
+import { IProductListFilters } from "./IProduct";
+import productRoutes from "./src/routes/product.routes";
 
+// Criação da aplicação
 const app = express();
 
+// Configura aplicação para receber json no body das requisições
 app.use(express.json());
 
-const products = [
-    {
-        id: 1,
-        name: "Feijão Carioca",
-        brand: "Broto Legal",
-        barCode: "2983746564738290",
-        suplier: "Rede de Distribuição Lida",
-        storageId: 98,
-        price: 8.79,
-        weight: 1,
-        measureUni: "kg"
-    },
-    {
-        id: 2,
-        name: "Arroz",
-        brand: "Tio João",
-        barCode: "019287364546372812",
-        suplier: "Rede de Distribuição Lida",
-        storageId: 65,
-        price: 29.99,
-        weight: 5,
-        measureUni: "kg"
-    }
-];
+app.use("/product", productRoutes);
 
-//Retornar um produto (GET)
-/*
-*   cliente: GET https://localhost:3000/product/
-*/
-app.get('/product/:id', (req: Request, res: Response) => {
-    const id = Number(req.params.id);
-    const name = req.query.name;
-    const brand = req.query.brand;
-    const storageId = Number(req.query.storageId);
+/**
+ * =======================================================================
+ * APIs de Cliente
+ * =======================================================================
+ */
 
-    const product = products.find((product) => {
-        return product.id == id || product.name == name || product.brand == brand || product.storageId == storageId;
-    });
-    
-    if (!product) {
-        res.status(404).send();
-        return;
-    } else {
-        res.status(200).json(product);
-        return;
-    };
-});
-
-//Retorna todos os produtos pela List (GET)
-/*
-*   cliente: GET https://localhost:3000/product
-*/
-app.get("/product", (req: Request, res: Response) => {
-    console.log(req.query)
-    res.status(200).json(products);
-});
-
-app.delete('/product/:id', (req: Request, res: Response) => {
-    const id = Number(req.params.id);
-    const storageId = Number(req.query.storageId);
-
-    const product = products.find((product) => {
-        return product.id == id || product.storageId == storageId;
-
-    });
-    if (!product) {
-        res.status(404).send();
-        return;
-    } else {
-        products.splice(products.indexOf(product));
-        res.status(204).send();
-        return;
-    };
-})
-
-//Criação de um novo produto (POST)
-/*
-*   Define o método Http Rest para cadastro de um produto (POST)
-*   que responde no path /product
-*   cliente: POST https://localhost:3000/product
-*/
-
-app.post('/product/:id', (req: Request, res: Response) => {
-    const product = req.body;
-    products.push(product);
-    res.status(201).send();
-})
-
-app.put('/product/:id', (req: Request, res: Response) => {
-    const id = Number(req.params.id);
-    const storageId = Number(req.query.storageId);
-    const product = req.body;
-
-    const index = products.findIndex((product) => {
-        return product.id == id || product.storageId == storageId;
-    });
-
-    if (index == -1) {
-        res.status(404).send();
-        return;
-    } else {
-        products[index] = product;
-        res.status(204).send();
-        return;
-    };
-})
-
+// Inicializa lista de clientes
 const clients = [
-    {
-        id: 1,
-        name: "João da Silva",
-        document: "123.456.789-00",
-        zipCode: "Rua das Flores, 123",
-        phone: "(11) 99999-9999",
-        email: "silvaJoao@gmail.com"
-    },
-    {
-        id: 2,
-        name: "Maria da Silva",
-        document: "123.456.789-01",
-        zipCode: "Rua das Flores, 248",
-        phone: "(11) 12345-6789",
-        email: "silvaMaria@gmail.com"
-    }
+  {
+    id: 1,
+    name: "João Rezende da Silva",
+    document: "256214785478",
+    zipCode: "74025140",
+    phone: "12992541257",
+    email: "joao.rezende@gmail.com",
+  },
 ];
 
-app.get('/client/:id', (req: Request, res: Response) => {
-    const id = Number(req.params.id);
-    const name = req.query.name;
-    const document = req.query.document;
-    const zipCode = req.query.zipCode;
+/**
+ * Define método Http Get, para busca de cliente por id
+ *  que responde no path /client/:id
+ * cliente: GET http://localhost:3000/client/12
+ *
+ */
+app.get("/client/:id", (req: Request, res: Response) => {
+  const client = clients.find((client) => {
+    return client.id === Number(req.params.id);
+  });
 
-    const client = clients.find((client) => {
-        return client.id == id || client.name == name || client.document == document || client.zipCode == zipCode;
-    });
+  if (!client) {
+    res.status(404).send();
+    return;
+  }
 
-    if (!client) {
-        res.status(404).send();
-        return;
-    } else {
-        res.status(200).json(client);
-        return;
-    };
+  // Responde requisição com o cliente encontrado
+  res.status(200).json(client);
 });
 
-app.get("/client", (req: Request, res: Response) => {
-    res.status(200).json(clients);
+/**
+ *
+ * Define método Http Post, para cadastro de cliente
+ *  que responde no path /client
+ *
+ * cliente: POST http://localhost:3000/client
+ *
+ */
+app.post("/client", (req: Request, res: Response) => {
+  const client = req.body;
+  clients.push(client);
+
+  res.status(201).send();
 });
 
-app.post('/client/:id', (req: Request, res: Response) => {
-    const client = req.body;
-    clients.push(client);
-    res.status(201).send();
-})
+/**
+ *
+ * Define método Http DELETE, para exclusão de cliente
+ *  que responde no path /client/:id
+ *
+ * cliente: DELETE http://localhost:3000/client/1
+ *
+ */
+app.delete("/client/:id", (req: Request, res: Response) => {
+  // atribui o id do cliente, recebido parâmetro à variável clientId
+  const clientId = Number(req.params.id);
 
-app.put('/client/:id', (req: Request, res: Response) => {
-    const id = Number(req.params.id);
-    const name = req.query.name;
-    const document = req.query.document;
-    const client = req.body;
+  // percorre a lista de clientes
+  clients.forEach((client, index) => {
+    // testa se o cliente atual da iteração é o cliente que está sendo excluído, pelo id
+    if (client.id === clientId) {
+      // remove apenas o cliente atual da lista "clients"
+      clients.splice(index, 1);
 
-    const index = clients.findIndex((client) => {
-        return client.id == id || client.name == name || client.document == document;
-    });
-
-    if (index == -1) {
-        res.status(404).send();
-        return;
-    } else {
-        clients[index] = client;
-        res.status(204).send();
-        return;
-    };
-})
-
-app.delete('/client/:id', (req: Request, res: Response) => {
-    const id = Number(req.query.id);
-    const document = req.query.document;
-
-    const client = clients.find((client) => {
-        return client.id == id || client.document == document;
-    });
-
-    if (!client) {
-        res.status(404).send();
-        return;
-    } else {
-        clients.splice(clients.indexOf(client));
-        res.status(204).send();
-        return;
-    };
-})
-
-const workers = [
-    {
-        id: 1,
-        name: "Joaquim da Silva",
-        document: "123.466.789-00",
-        position: "Vendedor",
-        workingHours: 8,
-        salary: 1000,
-        zipCode: "Rua dos Ventos, 1",
-    },
-    {
-        id: 2,
-        name: "Suzana De Capres",
-        document: "124.456.789-01",
-        position: "Vendedor",
-        workingHours: 8,
-        salary: 1000,
-        zipCode: "Rua das Rochas, 123",
+      // retorna status http 204 - "No Content"
+      res.status(204).send();
+      // encerra execução da função, com return void
+      return;
     }
-];
+  });
 
-app.get('/worker/:id', (req: Request, res: Response) => {
-    const id = Number(req.params.id);
-    const name = req.query.name;
-    const position = req.query.position;
-    const workingHours = Number(req.query.workingHours);
-
-    const worker = workers.find((worker) => {
-        return worker.id == id || worker.name == name || worker.position == position || worker.workingHours == workingHours;
-    });
-
-    if (!worker) {
-        res.status(404).send();
-        return;
-    } else {
-        res.status(200).json(worker);
-        return;
-    };
+  // retorna status http 404 - "Não encontrado", pois cliente não foi localizado
+  res.status(404).send();
 });
 
-app.get("/worker", (req: Request, res: Response) => {
-    res.status(200).json(workers);
+/**
+ *
+ * Define método Http PUT, para alteração de cliente
+ *  que responde no path /client/:id
+ *
+ * cliente: PUT http://localhost:3000/client/1
+ *
+ */
+app.put("/client/:id", (req: Request, res: Response) => {
+  // atribui o id do cliente, recebido parâmetro à variável clientId
+  const clientId = Number(req.params.id);
+  // atribui o corpo da requisição à variável dataToUpdate
+  const dataToUpdate = req.body;
+
+  // percorre a lista de clientes
+  clients.forEach((client, index) => {
+    // testa se o cliente atual da iteração é o cliente que está sendo atualizado, pelo id
+    if (client.id === clientId) {
+      // se sim, então atualiza o cliente atual com os dados já existentes,
+      // sobrescritos com os dados recebidos para atualização (uso de spread operator)
+      clients[index] = { ...client, ...dataToUpdate };
+
+      // retorna status http 204 - "No Content"
+      res.status(204).send();
+      // encerra execução da função, com return void
+      return;
+    }
+  });
+
+  // retorna status http 404 - "Não encontrado", pois cliente não foi localizado
+  res.status(404).send();
 });
 
-app.post('/worker/:id', (req: Request, res: Response) => {
-    const worker = req.body;
-    workers.push(worker);
-    res.status(201).send();
-});
-
-app.put('/worker/:id', (req: Request, res: Response) => {
-    const id = Number(req.params.id);
-    const name = req.query.name;
-    const document = req.query.document;
-    const worker = req.body;
-
-    const index = workers.findIndex((worker) => {
-        return worker.id == id || worker.name == name || worker.document == document;
-    });
-
-    if (index == -1) {
-        res.status(404).send();
-        return;
-    } else {
-        workers[index] = worker;
-        res.status(204).send();
-        return;
-    };
-});
-
-app.delete('/worker/:id', (req: Request, res: Response) => {
-    const id = Number(req.query.id);
-    const name = req.query.name;
-    const document = req.query.document;
-
-    const worker = workers.find((worker) => {
-        return worker.id == id || worker.name == name || worker.document == document;
-    });
-
-    if (!worker) {
-        res.status(404).send();
-        return;
-    } else {
-        workers.splice(workers.indexOf(worker));
-        res.status(204).send();
-        return;
-    };
-});
-
+/**
+ * Inicia aplicação na Porta 3000
+ *  */
 app.listen(3000, () => {
-    console.log('Server is running in door 3000');
+  console.log("Servidor executando na Porta 3000");
 });
