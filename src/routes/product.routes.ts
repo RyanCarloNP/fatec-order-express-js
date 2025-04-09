@@ -1,6 +1,7 @@
 import express from "express";
 import { Request, Response } from "express";
 import { IProductListFilters } from "../../IProduct";
+import { listProducts } from "../controllers/product.controller";
 
 const router = express.Router();
 
@@ -64,51 +65,11 @@ router.get("/:id", (req: Request, res: Response) => {
  *
  */
 router.get("/", (req: Request, res: Response) => {
-  console.log(req.query);
-  /**
-   * TODO: implementar busca pelos filtros name, brand, supplier, stockId
-   *  TODO: filtros de texto deverão buscar por partes das palavras e ignorar o case,
-   *  TODO  ou seja, "banana" deverá retornar "Banana Prata", caso esteja cadastrada
-   *  */
-
   const productFilters = req.query as unknown as IProductListFilters;
 
-  const {
-    name: nameFilter,
-    brand: brandFilter,
-    supplier: supplierFilter,
-    stockId: stockIdFilter,
-  } = productFilters;
-
-  const foundProducts = products.filter(
-    ({ name, brand, supplier, stockId }) => {
-      if (!(nameFilter || brandFilter || supplierFilter || stockIdFilter))
-        return true;
-
-      let found = true;
-
-      if (nameFilter && !name.toUpperCase().includes(nameFilter?.toUpperCase()))
-        found = false;
-
-      if (
-        brandFilter &&
-        !brand.toUpperCase().includes(brandFilter?.toUpperCase())
-      )
-        found = false;
-
-      if (
-        supplierFilter &&
-        !supplier.toUpperCase().includes(supplierFilter?.toUpperCase())
-      )
-        found = false;
-
-      if (stockId !== stockIdFilter) found = false;
-
-      return found;
-    }
-  );
-
-  res.status(200).json(foundProducts);
+  const products = listProducts(productFilters);
+  
+  res.status(200).json(products);
 });
 
 /**
