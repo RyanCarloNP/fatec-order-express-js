@@ -80,7 +80,7 @@ router.get("/", (req: Request, res: Response) => {
  * cliente: POST http://localhost:3000/product
  *
  */
-router.post("/", (req: Request, res: Response) => {
+router.post("/:id", (req: Request, res: Response) => {
   const product = req.body;
   products.push(product);
 
